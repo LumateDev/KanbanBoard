@@ -1,1 +1,16 @@
-// app global css in SCSS form
+// ─── Глобальные утилиты ───
+.ellipsis-2-lines {
+  display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2; /* stylelint-disable-line property-no-vendor-prefix */
+  -webkit-box-orient: vertical; /* stylelint-disable-line property-no-vendor-prefix */
+  line-clamp: 2;
+}
+
+// ─── Плавные переходы при смене темы ───
+body {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
