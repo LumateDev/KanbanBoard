@@ -26,14 +26,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useQuasar } from 'quasar';
 import { useBoardStore } from 'stores/board';
+import { useAppDialog } from 'src/composables/useAppDialog';
 import type { Card } from 'src/types/board';
 import KanbanColumn from './components/KanbanColumn.vue';
 import CardDialog from './components/CardDialog.vue';
 
-const $q = useQuasar();
 const boardStore = useBoardStore();
+const { confirm, promptText } = useAppDialog();
 
 const cardDialogVisible = ref(false);
 const cardDialogMode = ref<'create' | 'edit'>('create');
@@ -63,50 +63,34 @@ function onSaveCard(data: { title: string; description: string }): void {
   cardDialogVisible.value = false;
 }
 
-function onDeleteCard(columnId: string, cardId: string): void {
-  $q.dialog({
+async function onDeleteCard(columnId: string, cardId: string): Promise<void> {
+  const ok = await confirm({
     title: 'Удалить карточку',
     message: 'Вы уверены, что хотите удалить эту карточку?',
-    cancel: true,
-    persistent: true,
-  }).onOk(() => {
-    boardStore.removeCard(columnId, cardId);
   });
+  if (ok) boardStore.removeCard(columnId, cardId);
 }
 
-function onAddColumn(): void {
-  $q.dialog({
+async function onAddColumn(): Promise<void> {
+  const title = await promptText({
     title: 'Новая колонка',
     message: 'Введите название:',
-    prompt: {
-      model: '',
-      type: 'text',
-      isValid: (val: string) => val.trim().length > 0,
-    },
-    cancel: true,
-  }).onOk((title: string) => {
-    boardStore.addColumn(title.trim());
   });
+  if (title) boardStore.addColumn(title);
 }
 
 function onUpdateColumnTitle(columnId: string, title: string): void {
   boardStore.updateColumnTitle(columnId, title);
 }
 
-function onDeleteColumn(columnId: string): void {
+async function onDeleteColumn(columnId: string): Promise<void> {
   const column = boardStore.findColumn(columnId);
   const n = column?.cards.length ?? 0;
   const message =
     n > 0 ? `В колонке ${n} карточ${n === 1 ? 'ка' : n < 5 ? 'ки' : 'ек'}. Удалить?` : 'Удалить пустую колонку?';
 
-  $q.dialog({
-    title: 'Удалить колонку',
-    message,
-    cancel: true,
-    persistent: true,
-  }).onOk(() => {
-    boardStore.removeColumn(columnId);
-  });
+  const ok = await confirm({ title: 'Удалить колонку', message });
+  if (ok) boardStore.removeColumn(columnId);
 }
 
 function onCardsUpdated(columnId: string, cards: Card[]): void {
@@ -126,16 +110,17 @@ function onCardsUpdated(columnId: string, cards: Card[]): void {
   flex: 1;
   overflow-x: auto;
   overflow-y: hidden;
-  display: flex;
-  justify-content: center;
-  padding: 24px;
 }
 
 .board-columns {
-  display: inline-flex;
+  display: flex;
   gap: 16px;
   align-items: flex-start;
   height: 100%;
+  padding: 24px;
+  width: fit-content;
+  min-width: 100%;
+  justify-content: center;
 }
 
 .add-column-btn {

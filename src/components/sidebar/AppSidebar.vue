@@ -94,24 +94,21 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
 import { useAppStore } from 'stores/app';
 import { useBoardStore } from 'stores/board';
+import { useAppDialog } from 'src/composables/useAppDialog';
 import SidebarUserMenu from './SidebarUserMenu.vue';
 
-const $q = useQuasar();
 const appStore = useAppStore();
 const boardStore = useBoardStore();
+const { confirm } = useAppDialog();
 
-function onResetBoard(): void {
-  $q.dialog({
+async function onResetBoard(): Promise<void> {
+  const ok = await confirm({
     title: 'Сбросить доску',
     message: 'Все колонки и карточки будут удалены. Вы уверены?',
-    cancel: true,
-    persistent: true,
-  }).onOk(() => {
-    boardStore.resetBoard();
   });
+  if (ok) boardStore.resetBoard();
 }
 </script>
 

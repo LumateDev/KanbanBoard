@@ -1,0 +1,13 @@
+{
+  "name": "kanban-board",
+  "version": "0.0.1",
+  "description": "Kanban board for task management",
+  "author": "LumateDev <Sanchous557@mail.ru>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^7.5.0",
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  }
+}

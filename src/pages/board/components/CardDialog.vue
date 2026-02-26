@@ -1,6 +1,11 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)" persistent>
-    <q-card style="min-width: 380px; max-width: 500px">
+  <q-dialog
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue', $event)"
+    :position="isMobile ? 'top' : 'standard'"
+    persistent
+  >
+    <q-card class="card-dialog">
       <q-card-section>
         <div class="text-h6">
           {{ mode === 'create' ? 'Новая карточка' : 'Редактировать карточку' }}
@@ -38,7 +43,10 @@
 
 <script setup lang="ts">
 import { reactive, computed, watch } from 'vue';
+import { Platform } from 'quasar';
 import type { Card } from 'src/types/board';
+
+const isMobile = Platform.is.mobile ?? false;
 
 const props = defineProps<{
   modelValue: boolean;
@@ -85,3 +93,16 @@ function onSubmit(): void {
   });
 }
 </script>
+
+<style lang="scss" scoped>
+.card-dialog {
+  min-width: 380px;
+  max-width: 500px;
+  width: 100%;
+
+  @media (max-width: 599px) {
+    min-width: unset;
+    max-width: unset;
+  }
+}
+</style>

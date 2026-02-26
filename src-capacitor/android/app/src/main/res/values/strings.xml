@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">KanbanBoard</string>
+    <string name="title_activity_main">KanbanBoard</string>
+    <string name="package_name">com.alex.kanbanboard</string>
+    <string name="custom_url_scheme">com.alex.kanbanboard</string>
+</resources>
