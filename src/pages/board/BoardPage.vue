@@ -102,7 +102,7 @@ function onCardsUpdated(columnId: string, cards: Card[]): void {
 .board-page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 

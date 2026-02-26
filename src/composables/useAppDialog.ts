@@ -1,4 +1,4 @@
-import { useQuasar, Platform } from 'quasar';
+import { useQuasar } from 'quasar';
 
 interface ConfirmOptions {
   title: string;
@@ -13,9 +13,6 @@ interface PromptOptions {
 export function useAppDialog() {
   const $q = useQuasar();
 
-  // На мобильных диалог открывается сверху, чтобы клавиатура не перекрывала
-  const dialogPosition = Platform.is.mobile ? ('top' as const) : ('standard' as const);
-
   function confirm(options: ConfirmOptions): Promise<boolean> {
     return new Promise((resolve) => {
       $q.dialog({
@@ -23,7 +20,6 @@ export function useAppDialog() {
         message: options.message,
         cancel: true,
         persistent: true,
-        position: dialogPosition,
       })
         .onOk(() => resolve(true))
         .onCancel(() => resolve(false))
@@ -42,7 +38,6 @@ export function useAppDialog() {
           isValid: (val: string) => val.trim().length > 0,
         },
         cancel: true,
-        position: dialogPosition,
       })
         .onOk((val: string) => resolve(val.trim()))
         .onCancel(() => resolve(null))

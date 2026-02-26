@@ -1,3 +1,71 @@
+:root {
+  // Фоны
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-elevated: #ffffff;
+
+  // Текст
+  --color-text-primary: #1a1a2e;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+
+  // Границы
+  --color-border: #e5e7eb;
+
+  // Интерактив
+  --color-hover: rgba(0, 0, 0, 0.04);
+  --color-active-bg: rgba(25, 118, 210, 0.12);
+  --color-active-bg-hover: rgba(25, 118, 210, 0.18);
+
+  // Тени
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  // Навигация
+  --color-nav-inactive: #6b7280;
+  --color-nav-bg: #ffffff;
+}
+
+.body--dark {
+  // Фоны
+  --color-bg-primary: #121212;
+  --color-bg-secondary: #1e1e1e;
+  --color-bg-elevated: #1e1e1e;
+
+  // Текст
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #9ca3af;
+  --color-text-muted: #6b7280;
+
+  // Границы
+  --color-border: #2e2e2e;
+
+  // Интерактив
+  --color-hover: rgba(255, 255, 255, 0.06);
+  --color-active-bg: rgba(25, 118, 210, 0.2);
+  --color-active-bg-hover: rgba(25, 118, 210, 0.28);
+
+  // Тени
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  // Навигация
+  --color-nav-inactive: #9ca3af;
+  --color-nav-bg: #1e1e1e;
+}
+
+// ─── Плавные переходы при смене темы ───
+body {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.q-card {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border);
+}
+
 // ─── Глобальные утилиты ───
 .ellipsis-2-lines {
   display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
@@ -8,17 +76,17 @@
   line-clamp: 2;
 }
 
-// ─── Плавные переходы при смене темы ───
-body {
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+// Кастомные скроллбары
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.q-layout {
-  padding-top: env(safe-area-inset-top, 0);
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  padding-left: env(safe-area-inset-left, 0);
-  padding-right: env(safe-area-inset-right, 0);
-  box-sizing: border-box;
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+  border-radius: 3px;
 }

@@ -1,39 +1,24 @@
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
-import { watch } from 'vue';
-import { Dark } from 'quasar';
 
-type Theme = 'light' | 'dark';
+export type ThemeMode = 'system' | 'light' | 'dark';
 
 export const useAppStore = defineStore('app', () => {
-  const theme = useStorage<Theme>('app-theme', 'light');
+  const themeMode = useStorage<ThemeMode>('app-theme-mode', 'system');
   const sidebarOpen = useStorage<boolean>('sidebar-open', true);
 
-  function setTheme(newTheme: Theme): void {
-    theme.value = newTheme;
+  function setThemeMode(mode: ThemeMode) {
+    themeMode.value = mode;
   }
 
-  function toggleTheme(): void {
-    theme.value = theme.value === 'light' ? 'dark' : 'light';
-  }
-
-  function toggleSidebar(): void {
+  function toggleSidebar() {
     sidebarOpen.value = !sidebarOpen.value;
   }
 
-  watch(
-    theme,
-    (val) => {
-      Dark.set(val === 'dark');
-    },
-    { immediate: true }
-  );
-
   return {
-    theme,
+    themeMode,
     sidebarOpen,
-    setTheme,
-    toggleTheme,
+    setThemeMode,
     toggleSidebar,
   };
 });
