@@ -1,6 +1,8 @@
 {
-  "appId": "com.alex.kanbanboard",
+  "appId": "com.lumate.kanbanboard",
   "appName": "KanbanBoard",
   "webDir": "www",
-  "plugins": {}
+  "server": {
+    "androidScheme": "https"
+  }
 }

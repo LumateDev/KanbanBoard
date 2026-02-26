@@ -1,4 +1,4 @@
-package com.alex.kanbanboard;
+package com.lumate.kanbanboard;
 
 import com.getcapacitor.BridgeActivity;
 
