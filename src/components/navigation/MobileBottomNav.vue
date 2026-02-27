@@ -14,7 +14,6 @@
 <style scoped lang="scss">
 .mobile-footer {
   background: transparent;
-  padding-bottom: 8px;
 }
 
 .mobile-nav-wrapper {

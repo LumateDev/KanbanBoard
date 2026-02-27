@@ -1,65 +1,45 @@
 <template>
-  <q-page class="board-page">
-    <div class="board-scroll-container">
-      <div class="board-columns">
-        <KanbanColumn
-          v-for="column in boardStore.board.columns"
-          :key="column.id"
-          :column="column"
-          @add-card="onAddCard"
-          @edit-card="onEditCard"
-          @delete-card="onDeleteCard"
-          @update-title="onUpdateColumnTitle"
-          @delete-column="onDeleteColumn"
-          @cards-updated="onCardsUpdated"
-        />
+  <MobileBoard
+    v-if="isMobile"
+    :columns="boardStore.board.columns"
+    @add-card="onAddCard"
+    @delete-card="onDeleteCard"
+    @move-card="onMoveCard"
+    @update-title="onUpdateColumnTitle"
+    @delete-column="onDeleteColumn"
+    @add-column="onAddColumn"
+  />
 
-        <q-btn flat round dense icon="add" color="grey-5" size="md" class="add-column-btn" @click="onAddColumn">
-          <q-tooltip>Добавить колонку</q-tooltip>
-        </q-btn>
-      </div>
-    </div>
+  <DesktopBoard v-else />
 
-    <CardDialog v-model="cardDialogVisible" :card="editingCard" :mode="cardDialogMode" @save="onSaveCard" />
-  </q-page>
+  <CardDialog v-model="cardDialogVisible" @save="onSaveCard" />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useQuasar } from 'quasar';
 import { useBoardStore } from 'stores/board';
 import { useAppDialog } from 'src/composables/useAppDialog';
-import type { Card } from 'src/types/board';
-import KanbanColumn from './components/KanbanColumn.vue';
+import MobileBoard from './components/MobileBoard.vue';
+import DesktopBoard from './components/DesktopBoard.vue';
 import CardDialog from './components/CardDialog.vue';
 
+const $q = useQuasar();
 const boardStore = useBoardStore();
 const { confirm, promptText } = useAppDialog();
 
+const isMobile = computed(() => $q.screen.width < 600);
+
 const cardDialogVisible = ref(false);
-const cardDialogMode = ref<'create' | 'edit'>('create');
-const editingCard = ref<Card | null>(null);
 const activeColumnId = ref('');
 
 function onAddCard(columnId: string): void {
   activeColumnId.value = columnId;
-  editingCard.value = null;
-  cardDialogMode.value = 'create';
-  cardDialogVisible.value = true;
-}
-
-function onEditCard(columnId: string, card: Card): void {
-  activeColumnId.value = columnId;
-  editingCard.value = { ...card };
-  cardDialogMode.value = 'edit';
   cardDialogVisible.value = true;
 }
 
 function onSaveCard(data: { title: string; description: string }): void {
-  if (cardDialogMode.value === 'create') {
-    boardStore.addCard(activeColumnId.value, data.title, data.description);
-  } else if (editingCard.value) {
-    boardStore.updateCard(activeColumnId.value, editingCard.value.id, data);
-  }
+  boardStore.addCard(activeColumnId.value, data.title, data.description);
   cardDialogVisible.value = false;
 }
 
@@ -69,6 +49,10 @@ async function onDeleteCard(columnId: string, cardId: string): Promise<void> {
     message: 'Вы уверены, что хотите удалить эту карточку?',
   });
   if (ok) boardStore.removeCard(columnId, cardId);
+}
+
+function onMoveCard(fromColumnId: string, cardId: string, toColumnId: string): void {
+  boardStore.moveCard(fromColumnId, cardId, toColumnId);
 }
 
 async function onAddColumn(): Promise<void> {
@@ -92,66 +76,4 @@ async function onDeleteColumn(columnId: string): Promise<void> {
   const ok = await confirm({ title: 'Удалить колонку', message });
   if (ok) boardStore.removeColumn(columnId);
 }
-
-function onCardsUpdated(columnId: string, cards: Card[]): void {
-  boardStore.updateColumnCards(columnId, cards);
-}
 </script>
-
-<style lang="scss" scoped>
-.board-page {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-}
-
-.board-scroll-container {
-  flex: 1;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.board-columns {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  height: 100%;
-  padding: 24px;
-  width: fit-content;
-  min-width: 100%;
-  justify-content: center;
-}
-
-.add-column-btn {
-  margin-top: 4px;
-  opacity: 0.4;
-  transition: opacity 0.2s;
-  flex-shrink: 0;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-</style>
-
-<style lang="scss">
-.board-scroll-container {
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.12);
-    border-radius: 4px;
-
-    .body--dark & {
-      background: rgba(255, 255, 255, 0.15);
-    }
-  }
-}
-</style>

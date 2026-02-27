@@ -1,5 +1,5 @@
 <template>
-  <q-card class="kanban-card cursor-pointer" bordered flat @click="$emit('click')">
+  <q-card class="kanban-card" bordered flat>
     <q-card-section class="q-pa-sm">
       <div class="card-content">
         <div class="card-text">
@@ -11,7 +11,7 @@
           </div>
         </div>
 
-        <q-btn flat round dense size="xs" icon="close" color="grey-5" class="delete-btn" @click.stop="$emit('delete')">
+        <q-btn flat round dense size="sm" icon="close" color="grey-5" class="delete-btn" @click.stop="onDelete">
           <q-tooltip>Удалить</q-tooltip>
         </q-btn>
       </div>
@@ -20,45 +20,60 @@
 </template>
 
 <script setup lang="ts">
+import { useBoardStore } from 'stores/board';
+import { useAppDialog } from 'src/composables/useAppDialog';
 import type { Card } from 'src/types/board';
 
-defineProps<{
+const props = defineProps<{
   card: Card;
+  columnId: string;
 }>();
 
-defineEmits<{
-  click: [];
-  delete: [];
-}>();
+const boardStore = useBoardStore();
+const { confirm } = useAppDialog();
+
+async function onDelete(): Promise<void> {
+  const ok = await confirm({
+    title: 'Удалить карточку',
+    message: 'Вы уверены, что хотите удалить эту карточку?',
+  });
+  if (ok) {
+    boardStore.removeCard(props.columnId, props.card.id);
+  }
+}
 </script>
 
 <style lang="scss" scoped>
 .kanban-card {
   border-radius: 8px;
-  transition:
-    box-shadow 0.2s,
-    transform 0.15s;
-  background: white;
+  transition: all 0.2s ease;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  cursor: grab;
 
   .body--dark & {
-    background: #3a3a3a;
+    background: #2d2d2d;
     border-color: rgba(255, 255, 255, 0.08);
   }
 
   &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-text-muted);
 
     .delete-btn {
       opacity: 1;
     }
+  }
+
+  &:active {
+    cursor: grabbing;
   }
 }
 
 .card-content {
   display: flex;
   align-items: flex-start;
-  gap: 4px;
+  gap: 8px;
 }
 
 .card-text {
@@ -70,11 +85,5 @@ defineEmits<{
   opacity: 0;
   transition: opacity 0.2s;
   flex-shrink: 0;
-}
-
-@media (max-width: 599px) {
-  .delete-btn {
-    opacity: 0.6;
-  }
 }
 </style>

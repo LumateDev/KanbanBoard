@@ -21,6 +21,25 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
+  function moveCard(fromColumnId: string, cardId: string, toColumnId: string): void {
+    if (fromColumnId === toColumnId) return;
+
+    const fromColumn = findColumn(fromColumnId);
+    const toColumn = findColumn(toColumnId);
+    if (!fromColumn || !toColumn) return;
+
+    const cardIndex = fromColumn.cards.findIndex((c) => c.id === cardId);
+    if (cardIndex === -1) return;
+
+    const removed = fromColumn.cards.splice(cardIndex, 1);
+    const card = removed[0];
+    if (!card) return;
+
+    card.updatedAt = Date.now();
+    toColumn.cards.push(card);
+    touch();
+  }
+
   function removeColumn(columnId: string): void {
     const index = board.value.columns.findIndex((c) => c.id === columnId);
     if (index !== -1) {
@@ -92,6 +111,7 @@ export const useBoardStore = defineStore('board', () => {
 
     addColumn,
     updateColumnTitle,
+    moveCard,
     removeColumn,
     reorderColumns,
 
